@@ -20,6 +20,18 @@ func (s *server) handleHealthcheck() http.HandlerFunc {
 	}
 }
 
+func (s *server) handlePingDB() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := s.db.Ping()
+		if err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "OK")
+	}
+}
+
 func (s *server) handleMarker() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 

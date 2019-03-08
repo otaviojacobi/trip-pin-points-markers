@@ -1,15 +1,23 @@
 language: go
-# Force-enable Go modules. This will be unnecessary when Go 1.12 lands.
 env:
+  matrix:
   - GO111MODULE=on
-
-# You don't need to test on very old version of the Go compiler. It's the user's
-# responsibility to keep their compilers up to date.
+  global:
+    secure: UoIQe/4KWfxZtiCkBd9G/4f48VbGAkvPXAAUx+5xvU4NQoC3cviqpMwHENjv0Xzcw6fCOhJcU0h+e9/XV44eafZrY7k3g2I8ybsPesrnzCo2Pj1taNzNWaHRsuR1v58CCxajQ6zg/48xTjVc8a8GUfQRA7dXoMlHfavZ64/ZSDzLX0GcrmwxrV4KMXi/Ui9gE2rR5oyc1dZrpPLHiSnVFpyPE4hnN/tqT+Hfgtu2JQjt3Iq2ALDRqsvGmLsFHSGFv/09oC0GA644q/pu6QrKnD6h1yFYNHDn27yckXNBWeI65E10QK8UehLhoKxmcIQwUaO5iK/ppVxc0oKLvm8Ogvl1yX8D/hzDAUwHWPeYq4296MnE02JAmoGjWzBLPeMjFdVHFDmym4t5sMNBlUltP3EMv0FjWnznek+sIGmQqwOdQ69IW3tHLM0Kx4YU17IrIivW6biGAL3Kbm8TIjlda0Z4k1UjI6podBR+k8FRhSnfWszTu1sXla22n7e8tYtSSpfPA81s07VonHcy4xiQIs8sAPwjrSgHJKOx0JjmfuLIqrIN9lgOGm8HFY2k6HG00PL/jHPWjg4SmpsTNMd5WBzBY3P+AjjqR4HZlfH0mCpRUNaFY1qdE7mhpa0PSvJpMDozjHCQVw3LVdvEHnygw4PE4b5Ctp3AL/JcuIyWizM=
 go:
-  - 1.11.x
-
+- 1.11.x
 before_script:
-  - ./build.sh
-
+- "./build.sh"
 script:
-  - go test -v -race ./...
+- go test -v -race ./...
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id:
+    secure: UaQ/KpVyYq+WymN53pprmIAlQXei4SwMQBQtepgrG7wtJbpfIZhTK6fMiPfnXJPL1lNF9z3hAP2LiVb7/O0reFcIDlThuKNYre08G+8+dGeIf7mtY2Dj59rBDIPlMZDIyeeLb8sxebPwCdp6XJPYIqVDajN0N/zfqDwY/i5FVgK4w9PyKwHa/iv+Owv9UzsU7s3fx7e17N9hFE2bbQNR4UTIxPTShP8ILC6dY30UyDycWzcnO2CHWQadybFuQGRDMUSGRKdvSbjyw99tYpOE1ZveLAXmsrPp8mTmiJ6Dp+6AQS2Hte5HynA/vPOqR6k7SlRFnVwApgXl7fLeRPFQqw2k9Xbs/DdbEh86TyBRxYGKyoHE7eJOo0L34gE79YXDlxG1CiF5vOE7A3lYFyu+amjlBQIRVUWgEshiBK1WhC0SUQDsKdfvmtXW5O7aWzwN9s26oD0s6a2VJLIiCv2tmPmDJqoQ6tfZDp7y1XVLIlUMPbkhZMZ685XUVAl6GZxebyfrV6zUu+uEnQYrvcUABNRCbvFMVN/WxWIe0ZfA+HcLeBP+kHX7aqOKCTz0HGwazen7sM2fCRQsK4ZXQk3pZZeX7UIITQ5jUUVELdQAJzEEwhCUXrsdK8lC2/NjhZrCe5mvdsavQ7X62eya8/KewtQK7OQ1Rvw6TdBT+ragcIc=
+  secret_access_key:
+    secure: jIJkdFI/gffmj+wb4vWfQl7BVqtMSZ1Gb7uL+dllDZ+mJVETETo1Q2h61rzbwAKS9ln6P+0AgjD2Pt6rlr+Vk3FRVVxVKLRSlmsxRJ4h7n70oqDzzU/mV4j4cK1WojrqzzkbdXO9bbX1hrMpyHeW76WHuYFh2BETIqn6IE3e3SyRoGZOxIZCH+ZrMsXxWaWBK4aPmk+G91VsR7hVuQAiRydovo41jvKlt6urY/1MhrYasdYIKMpz5Wn68XHUwS5Jm+MNXDYHp7J9xMYdgXC28VY7lF/uGS8m34YzuVtAQ9jSg5qWmCq1OtSxG8TKv+SR9seYZF4ExBxL91F7zL9gW/bJPfLuzZ4JniBXwm6O39B1ZzVxcz3Af/TxYOGrOJWkr5HSDRCTidpxse/CdhUHnErc6V9nJ/8str9bYZh5CfTONK8vvWpchbET0zLdp0IHoX5H+ibwJTWI/evHMynItyCJKLbq9HDzpgzY09azMJlIJvREK6IBD1eZbr0T3OMj+6V3mgAgAem/ZimcTW0Mdd7fPy3duBmg7wU1rCtncj0GLbWlvTL+Uz/z+9pOiKwBZnppi+CZpZsWmbF2ul3WbpR1d6yPrD1y55SBZbYJcTxohJvKeJPm/xzCys6CwCtE4sCV0sjrY44s5EC3KryjZ/33lAvu/rjNrWMGd5VklT8=
+  region: sa-east-1
+  app: trip-pin-points-markers
+  env: TripPinPointsMarkers-env
+  bucket_name: elasticbeanstalk-sa-east-1-877463950700

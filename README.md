@@ -1,4 +1,8 @@
+[![Build Status](https://travis-ci.com/otaviojacobi/trip-pin-points-markers.png)](https://travis-ci.com/otaviojacobi/trip-pin-points-markers)
+
 # Trip Tip Points Markers Service
+
+## AVAILABLE AT: http://trip-pin-points-markers.sa-east-1.elasticbeanstalk.com
 
 ## Running
 
