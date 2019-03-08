@@ -58,6 +58,8 @@ func (s *server) handleSingleMarker() http.HandlerFunc {
 }
 
 func getUserZID(s *server, w http.ResponseWriter, r *http.Request) string {
+	w.Header().Set("Content-Type", "application/json")
+
 	regex := regexp.MustCompile("^Bearer (.*)")
 	rawHeader := r.Header.Get("Authorization")
 	matches := regex.FindStringSubmatch(rawHeader)
@@ -83,7 +85,6 @@ func getUserZID(s *server, w http.ResponseWriter, r *http.Request) string {
 }
 
 func handleGetMarker(s *server, w http.ResponseWriter, r *http.Request, userZid string) {
-	w.Header().Set("Content-Type", "application/json")
 	markers, err := getMarkerCollection(userZid, s.db)
 
 	if err != nil {
@@ -99,7 +100,6 @@ func handleGetMarker(s *server, w http.ResponseWriter, r *http.Request, userZid 
 }
 
 func handleGetSingleMarker(s *server, w http.ResponseWriter, r *http.Request, userZid string) {
-	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
 
@@ -118,7 +118,6 @@ func handleGetSingleMarker(s *server, w http.ResponseWriter, r *http.Request, us
 }
 
 func handlePutMarker(s *server, w http.ResponseWriter, r *http.Request, userZid string) {
-	w.Header().Set("Content-Type", "application/json")
 	marker, err := getNewMarker(r.Body, userZid)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -151,7 +150,6 @@ func handleDeleteMarker(s *server, w http.ResponseWriter, r *http.Request, userZ
 }
 
 func handleNotSupportedMethod(w http.ResponseWriter, method string) {
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	fmt.Fprintf(w, `{"message":"Method %s is not supported"}`, method)
 	return
