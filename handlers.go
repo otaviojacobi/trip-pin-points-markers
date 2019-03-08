@@ -79,13 +79,6 @@ func getUserZID(s *server, w http.ResponseWriter, r *http.Request) string {
 	}
 
 	claims := token.Claims.(jwt.MapClaims)
-
-	if claims["zid"] == nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, `{"message":"Could not find zid in given token"}`)
-		return ""
-	}
-
 	return fmt.Sprintf("%v", claims["zid"])
 }
 

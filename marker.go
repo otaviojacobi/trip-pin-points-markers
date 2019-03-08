@@ -35,11 +35,7 @@ func getMarkerCollection(user string, db *sql.DB) (*MarkerCollection, error) {
 	WHERE username=$1
 	`
 
-	stmt, err := db.Prepare(sqlStatement)
-	if err != nil {
-		return nil, err
-	}
-
+	stmt, _ := db.Prepare(sqlStatement)
 	rows, err := stmt.Query(user)
 	if err != nil {
 		return nil, err
@@ -75,21 +71,14 @@ func getMarker(user string, markerID string, db *sql.DB) (*Marker, error) {
 	AND id=$2
 	`
 
-	stmt, err := db.Prepare(sqlStatement)
-	if err != nil {
-		return nil, err
-	}
-
+	stmt, _ := db.Prepare(sqlStatement)
 	row := stmt.QueryRow(user, markerID)
-	if err != nil {
-		return nil, err
-	}
 
 	var note, dbUser string
 	var lat, lng float64
 	var id int
 
-	err = row.Scan(&id, &dbUser, &lat, &lng, &note)
+	err := row.Scan(&id, &dbUser, &lat, &lng, &note)
 
 	if err != nil {
 		return nil, err
@@ -106,10 +95,15 @@ func deleteMarker(user string, markerID string, db *sql.DB) error {
 	AND id=$2
 	`
 	result, err := db.Exec(sqlStatement, user, markerID)
+
+	if err != nil {
+		return err
+	}
+
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
 		return errors.New("Could not find marker to delete")
 	}
-	return err
+	return nil
 }
