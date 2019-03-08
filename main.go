@@ -126,7 +126,7 @@ func main() {
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
-		port = "3000"
+		port = "5000"
 	}
 
 	http.ListenAndServe(":"+port, s.router)
