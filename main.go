@@ -130,7 +130,7 @@ func main() {
 		port = "5000"
 	}
 
-	handler := cors.Default().Handler(s.router)
+	handler := cors.AllowAll().Handler(s.router)
 
 	s.logger.Info("Listening in", zap.String("port", port))
 	s.logger.Fatal("fail", zap.Error(http.ListenAndServe(":"+port, handler)))
