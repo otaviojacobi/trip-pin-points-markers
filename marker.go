@@ -69,7 +69,7 @@ func getMarker(user string, lat string, lng string, db *sql.DB) (*Marker, error)
 	SELECT * FROM markers 
 	WHERE username=$1
 	AND lat=$2
-	AND lng=$3
+	AND long=$3
 	`
 
 	stmt, _ := db.Prepare(sqlStatement)
@@ -94,7 +94,7 @@ func deleteMarker(user string, lat string, lng string, db *sql.DB) error {
 	DELETE FROM markers
 	WHERE username=$1
 	AND lat=$2
-	AND lng=$3
+	AND long=$3
 	`
 	result, err := db.Exec(sqlStatement, user, lat, lng)
 
