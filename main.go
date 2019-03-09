@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/pem"
 	"fmt"
+	"github.com/rs/cors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -129,5 +130,8 @@ func main() {
 		port = "5000"
 	}
 
-	http.ListenAndServe(":"+port, s.router)
+	handler := cors.Default().Handler(s.router)
+
+	s.logger.Info("Listening in", zap.String("port", port))
+	s.logger.Fatal("fail", zap.Error(http.ListenAndServe(":"+port, handler)))
 }

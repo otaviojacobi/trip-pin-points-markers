@@ -19,14 +19,14 @@ import (
 
 const key = `
 -----BEGIN RSA PUBLIC KEY-----
-MIIBCgKCAQEAnN731yno9uLTW/wEpzsKXna30gSUotWY4+Yugw+L1zXemOjTZCOURoUcyg/b
-p2GcwHx6ZHb+zQcFAXAa2jetaoeTM8F08LMfLwCYd7SWwxHgkA4f3+7cZLPAa5mMBM4nogZ+
-dkzbgAmSl1CQF4Yt/YxgqjDbEk2ZA+s2rE6qya7lmAQ2Ta0XKtZ9J3mbE4HHLpztRLXBlrxh
-5r/18yoY42SlfGx8hSkey/4lpJzudWRDCtGU2mSJFkCsccSZ9JQkbTURorph+sZcJQbgNfvE
-kjcXRumdsINCthCWNDWzV+quF3FDNAcF+zGqRd9SU11WGqIuyT1upYA6YOp/XOB1mwIDAQAB
+MIIBCgKCAQEAihuRqrKSHda5SVLSkTNC4DNDB+tczjI7qwPcPGuqgOCPMAlf3R+foxf1WJ4f
+yP+4SRW0KigvqKylq6SpALMPY1r+1lEFznCmjIijAoBctiot+zMBiVR2+wla8+s7UO4Ip838
+ZUzakZWExhfRJjjLcKpWAPigCqRkSexudrl+R+hE/bTm79aBKZWMN3HABmUinKGV2j70sFcJ
+UWAOp5h2fDioaIa+IrH7dzacaMm5HU2qOFxvCqgkr2WUmg7OjKLqh4KId0bXuyqTn33POsS1
+DDX+f94G0bJIE9Av5Ke7eOmLc8h8UYk/IEqzwKm/ieHV5PsvxcMb3eQs6V07WC+ihQIDAQAB
 -----END RSA PUBLIC KEY-----`
 
-const stubAuthHeader = `Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZXMiOlsidXNlciJdLCJ6aWQiOiJzdHJpbmczIiwiaWF0IjoxNTUyMDU2OTgwLCJleHAiOjE1NTIxMDAxODB9.eS6xZjnec_RGsEluHlYhGy8PTay0XU4OGLGJVhLWoe7EHRZzN0MhPaTE6btIVZrRYwNsg8P0HlZPAWuva_fsD2u1urvcE30TXmtwKoQa0jxy3xrHb36vn4Vsdp9M7CHq3AifgaWwhe-wTBggF7aOjc0Qh8Qf1VRiZo0FuLBSQqgELgOofy-T6Sv92Yp9Cz0GjP2pq1nuGMvYFaMwtHm0uCeFWiTSAHY8kUGcqx6bLIrCBWZ2-0kp37uaTJf1rNL8btE7uhYf_gfV3M560UqsnuVTphQUjmCov-vUTt9_0PBnES-MfTPmsXbY-0lw94ucP0agBYeVegjU2P07oirO5g`
+const stubAuthHeader = `Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZXMiOlsidXNlciJdLCJ6aWQiOiJzdHJpbmczIiwiaWF0IjoxNTUyMTM0MTA4LCJleHAiOjE1NTIxNzczMDh9.K2AJJNHiNV2Lh4Zo7BsMx0nsKCgqhntATM7DdbttEEtpeuM0zfxCb_YStmmxHqi48wx9nMtMRBQJjb2DZODJISDGcPDXrAQDGaJA5v9vaNKaCUvsw-ozHibEXUBdzqLXlNe_7bLzHweLGT7gvXgSMasYyBDAIelS6wRmLS06wzlCTbacU1iOKTt5GvabGZK1ILs9y4Riz9O75seN-InKB8eVpQn9AYIT9oXJksUx-lVooLrzFAz8yWVPgPtb9nIScMDCPDDGw2miiWwxTdsVj7P1MGbILHXAqOcATy0wlJMDhUj3AhcspgnzCTYnWZHdByvSgKMfbNBkiw4dpS3RYw`
 
 func getMockServer() (*server, sqlmock.Sqlmock) {
 
@@ -74,7 +74,7 @@ func TestInsertNewMarker(t *testing.T) {
 	res := httptest.NewRecorder()
 
 	mock.ExpectExec("INSERT INTO markers").WithArgs("string3", 2.32, 5.55, "").WillReturnResult(sqlmock.NewResult(1, 1))
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -95,7 +95,7 @@ func TestInsertOnDbFail(t *testing.T) {
 	res := httptest.NewRecorder()
 
 	mock.ExpectExec("INSERT INTO markers").WithArgs("string3", 2.32, 5.55, "").WillReturnError(errors.New("test error"))
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -114,7 +114,7 @@ func TestInsertNewMarkerNoLatLng(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -132,7 +132,7 @@ func TestInsertNewMarkerNoLat(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -150,7 +150,7 @@ func TestInsertNewMarkerNoLng(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -168,7 +168,7 @@ func TestInsertNewMarkerZeroLatLng(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -186,7 +186,7 @@ func TestInsertNewMarkerZeroLat(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -204,7 +204,7 @@ func TestInsertNewMarkerZeroLng(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -222,7 +222,7 @@ func TestInsertNoAuthHeader(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -240,7 +240,7 @@ func TestInsertInvalidAuthHeader(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleMarker()
+	fun := s.handleInsertMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusUnauthorized, res.Code)
@@ -269,7 +269,7 @@ func TestGetAllMarkers(t *testing.T) {
 		WithArgs("string3").
 		WillReturnRows(rows)
 
-	fun := s.handleMarker()
+	fun := s.handleGetAllMarkers()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -295,7 +295,7 @@ func TestGetAllMarkersDBError(t *testing.T) {
 		WithArgs("string3").
 		WillReturnError(errors.New("test error"))
 
-	fun := s.handleMarker()
+	fun := s.handleGetAllMarkers()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusNotFound, res.Code)
@@ -322,7 +322,7 @@ func TestGetSingleMarker(t *testing.T) {
 		ExpectQuery().
 		WillReturnRows(rows)
 
-	fun := s.handleSingleMarker()
+	fun := s.handleGetSingleMarker()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -347,7 +347,7 @@ func TestGetSingleMarkerDBError(t *testing.T) {
 		ExpectQuery().
 		WillReturnError(errors.New("test error"))
 
-	fun := s.handleSingleMarker()
+	fun := s.handleGetSingleMarker()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -371,7 +371,7 @@ func TestDeleteMarker(t *testing.T) {
 		ExpectExec("DELETE").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	fun := s.handleSingleMarker()
+	fun := s.handleDeleteMarker()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -394,7 +394,7 @@ func TestDeleteMarkerWithNotFoundMarker(t *testing.T) {
 		ExpectExec("DELETE").
 		WillReturnResult(sqlmock.NewResult(0, 0))
 
-	fun := s.handleSingleMarker()
+	fun := s.handleDeleteMarker()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -418,7 +418,7 @@ func TestDeleteMarkerWithDBFail(t *testing.T) {
 		ExpectExec("DELETE").
 		WillReturnError(errors.New("test error"))
 
-	fun := s.handleSingleMarker()
+	fun := s.handleDeleteMarker()
 	fun(res, req)
 
 	mock.ExpectationsWereMet()
@@ -436,7 +436,7 @@ func TestDeleteNoAuthHeader(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleSingleMarker()
+	fun := s.handleDeleteMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
@@ -454,45 +454,9 @@ func TestDeleteInvalidAuthHeader(t *testing.T) {
 	assert.NoError(t, err)
 	res := httptest.NewRecorder()
 
-	fun := s.handleSingleMarker()
+	fun := s.handleDeleteMarker()
 	fun(res, req)
 
 	assert.Equal(t, http.StatusUnauthorized, res.Code)
 	assert.Equal(t, res.Body.String(), `{"message":"Invalid Token"}`)
-}
-
-func TestInvalidMethodForMarkerHandler(t *testing.T) {
-	s, _ := getMockServer()
-	defer s.finalize()
-
-	req, err := http.NewRequest("OPTIONS", "/marker", nil)
-	req.Header.Set("Authorization", stubAuthHeader)
-	req.Header.Set("Content-Type", "application/json")
-
-	assert.NoError(t, err)
-	res := httptest.NewRecorder()
-
-	fun := s.handleMarker()
-	fun(res, req)
-
-	assert.Equal(t, http.StatusMethodNotAllowed, res.Code)
-	assert.Equal(t, res.Body.String(), `{"message":"Method OPTIONS is not supported"}`)
-}
-
-func TestInvalidMethodForSingleMarkerHandler(t *testing.T) {
-	s, _ := getMockServer()
-	defer s.finalize()
-
-	req, err := http.NewRequest("OPTIONS", "/marker", nil)
-	req.Header.Set("Authorization", stubAuthHeader)
-	req.Header.Set("Content-Type", "application/json")
-
-	assert.NoError(t, err)
-	res := httptest.NewRecorder()
-
-	fun := s.handleSingleMarker()
-	fun(res, req)
-
-	assert.Equal(t, http.StatusMethodNotAllowed, res.Code)
-	assert.Equal(t, res.Body.String(), `{"message":"Method OPTIONS is not supported"}`)
 }

@@ -32,43 +32,6 @@ func (s *server) handlePingDB() http.HandlerFunc {
 	}
 }
 
-func (s *server) handleMarker() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		userZid := getUserZID(s, w, r)
-		if userZid == "" {
-			return
-		}
-
-		switch r.Method {
-		case "GET":
-			handleGetMarker(s, w, r, userZid)
-		case "PUT":
-			handlePutMarker(s, w, r, userZid)
-		default:
-			handleNotSupportedMethod(w, r.Method)
-		}
-	}
-}
-
-func (s *server) handleSingleMarker() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		userZid := getUserZID(s, w, r)
-		if userZid == "" {
-			return
-		}
-
-		switch r.Method {
-		case "GET":
-			handleGetSingleMarker(s, w, r, userZid)
-		case "DELETE":
-			handleDeleteMarker(s, w, r, userZid)
-		default:
-			handleNotSupportedMethod(w, r.Method)
-		}
-	}
-}
-
 func getUserZID(s *server, w http.ResponseWriter, r *http.Request) string {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -96,75 +59,99 @@ func getUserZID(s *server, w http.ResponseWriter, r *http.Request) string {
 	return fmt.Sprintf("%v", claims["zid"])
 }
 
-func handleGetMarker(s *server, w http.ResponseWriter, r *http.Request, userZid string) {
-	markers, err := getMarkerCollection(userZid, s.db)
+func (s *server) handleGetAllMarkers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		s.logger.Info("Could not find markers", zap.Error(err))
-		fmt.Fprint(w, `{"message":"Could not find markers"}`)
-		return
+		userZid := getUserZID(s, w, r)
+		if userZid == "" {
+			return
+		}
+
+		markers, err := getMarkerCollection(userZid, s.db)
+
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			s.logger.Info("Could not find markers", zap.Error(err))
+			fmt.Fprint(w, `{"message":"Could not find markers"}`)
+			return
+		}
+
+		response, _ := json.Marshal(markers)
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, string(response))
 	}
-
-	response, _ := json.Marshal(markers)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(response))
 }
 
-func handleGetSingleMarker(s *server, w http.ResponseWriter, r *http.Request, userZid string) {
+func (s *server) handleGetSingleMarker() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-	params := mux.Vars(r)
+		userZid := getUserZID(s, w, r)
+		if userZid == "" {
+			return
+		}
 
-	markers, err := getMarker(userZid, params["id"], s.db)
+		params := mux.Vars(r)
+		markers, err := getMarker(userZid, params["id"], s.db)
 
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		s.logger.Info("Could not find markers", zap.Error(err))
-		fmt.Fprint(w, `{"message":"Could not find marker"}`)
-		return
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			s.logger.Info("Could not find markers", zap.Error(err))
+			fmt.Fprint(w, `{"message":"Could not find marker"}`)
+			return
+		}
+
+		response, _ := json.Marshal(markers)
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, string(response))
 	}
-
-	response, _ := json.Marshal(markers)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(response))
 }
 
-func handlePutMarker(s *server, w http.ResponseWriter, r *http.Request, userZid string) {
-	marker, err := getNewMarker(r.Body, userZid)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		s.logger.Info("Could not parse given body", zap.Error(err))
-		fmt.Fprint(w, `{"message":"Could not parse given body"}`)
-		return
-	}
+func (s *server) handleInsertMarker() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-	if err = marker.save(s.db); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		s.logger.Error("Could not insert in database", zap.Error(err))
-		fmt.Fprint(w, `{"message":"Could not insert in database"}`)
-		return
-	}
+		userZid := getUserZID(s, w, r)
+		if userZid == "" {
+			return
+		}
 
-	response, _ := json.Marshal(marker)
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprint(w, string(response))
+		marker, err := getNewMarker(r.Body, userZid)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			s.logger.Info("Could not parse given body", zap.Error(err))
+			fmt.Fprint(w, `{"message":"Could not parse given body"}`)
+			return
+		}
+
+		if err = marker.save(s.db); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			s.logger.Error("Could not insert in database", zap.Error(err))
+			fmt.Fprint(w, `{"message":"Could not insert in database"}`)
+			return
+		}
+
+		response, _ := json.Marshal(marker)
+		w.WriteHeader(http.StatusCreated)
+		fmt.Fprint(w, string(response))
+	}
 }
 
-func handleDeleteMarker(s *server, w http.ResponseWriter, r *http.Request, userZid string) {
-	params := mux.Vars(r)
+func (s *server) handleDeleteMarker() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-	if err := deleteMarker(userZid, params["id"], s.db); err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		s.logger.Error("Could not insert in database", zap.Error(err))
-		fmt.Fprint(w, `{"message":"Could not delete marker"}`)
+		userZid := getUserZID(s, w, r)
+		if userZid == "" {
+			return
+		}
+
+		params := mux.Vars(r)
+
+		if err := deleteMarker(userZid, params["id"], s.db); err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			s.logger.Error("Could not insert in database", zap.Error(err))
+			fmt.Fprint(w, `{"message":"Could not delete marker"}`)
+		}
+		w.WriteHeader(http.StatusNoContent)
 	}
-	w.WriteHeader(http.StatusNoContent)
-}
-
-func handleNotSupportedMethod(w http.ResponseWriter, method string) {
-	w.WriteHeader(http.StatusMethodNotAllowed)
-	fmt.Fprintf(w, `{"message":"Method %s is not supported"}`, method)
-	return
 }
 
 func getNewMarker(body io.ReadCloser, user string) (*Marker, error) {
