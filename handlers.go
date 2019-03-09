@@ -91,7 +91,7 @@ func (s *server) handleGetSingleMarker() http.HandlerFunc {
 		}
 
 		params := mux.Vars(r)
-		markers, err := getMarker(userZid, params["id"], s.db)
+		markers, err := getMarker(userZid, params["lat"], params["lng"], s.db)
 
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
@@ -145,7 +145,7 @@ func (s *server) handleDeleteMarker() http.HandlerFunc {
 
 		params := mux.Vars(r)
 
-		if err := deleteMarker(userZid, params["id"], s.db); err != nil {
+		if err := deleteMarker(userZid, params["lat"], params["lng"], s.db); err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			s.logger.Error("Could not insert in database", zap.Error(err))
 			fmt.Fprint(w, `{"message":"Could not delete marker"}`)

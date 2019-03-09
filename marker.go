@@ -63,38 +63,40 @@ func getMarkerCollection(user string, db *sql.DB) (*MarkerCollection, error) {
 	return &markerColelction, nil
 }
 
-func getMarker(user string, markerID string, db *sql.DB) (*Marker, error) {
+func getMarker(user string, lat string, lng string, db *sql.DB) (*Marker, error) {
 
 	sqlStatement := `
 	SELECT * FROM markers 
 	WHERE username=$1
-	AND id=$2
+	AND lat=$2
+	AND lng=$3
 	`
 
 	stmt, _ := db.Prepare(sqlStatement)
-	row := stmt.QueryRow(user, markerID)
+	row := stmt.QueryRow(user, lat, lng)
 
 	var note, dbUser string
-	var lat, lng float64
+	var resultLat, resultLng float64
 	var id int
 
-	err := row.Scan(&id, &dbUser, &lat, &lng, &note)
+	err := row.Scan(&id, &dbUser, &resultLat, &resultLng, &note)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &Marker{Lat: lat, Lng: lng, Note: note, User: dbUser}, nil
+	return &Marker{Lat: resultLat, Lng: resultLng, Note: note, User: dbUser}, nil
 }
 
-func deleteMarker(user string, markerID string, db *sql.DB) error {
+func deleteMarker(user string, lat string, lng string, db *sql.DB) error {
 
 	sqlStatement := `
 	DELETE FROM markers
 	WHERE username=$1
-	AND id=$2
+	AND lat=$2
+	AND lng=$3
 	`
-	result, err := db.Exec(sqlStatement, user, markerID)
+	result, err := db.Exec(sqlStatement, user, lat, lng)
 
 	if err != nil {
 		return err

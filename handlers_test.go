@@ -306,7 +306,7 @@ func TestGetSingleMarker(t *testing.T) {
 	s, mock := getMockServer()
 	defer s.finalize()
 
-	req, err := http.NewRequest("GET", "/marker/2", nil)
+	req, err := http.NewRequest("GET", "/marker/2/3", nil)
 
 	req.Header.Set("Authorization", stubAuthHeader)
 	req.Header.Set("Content-Type", "application/json")
@@ -359,7 +359,7 @@ func TestDeleteMarker(t *testing.T) {
 	s, mock := getMockServer()
 	defer s.finalize()
 
-	req, err := http.NewRequest("DELETE", "/marker/2", nil)
+	req, err := http.NewRequest("DELETE", "/marker/2/3", nil)
 
 	req.Header.Set("Authorization", stubAuthHeader)
 	req.Header.Set("Content-Type", "application/json")
@@ -382,7 +382,7 @@ func TestDeleteMarkerWithNotFoundMarker(t *testing.T) {
 	s, mock := getMockServer()
 	defer s.finalize()
 
-	req, err := http.NewRequest("DELETE", "/marker/2", nil)
+	req, err := http.NewRequest("DELETE", "/marker/2/3", nil)
 
 	req.Header.Set("Authorization", stubAuthHeader)
 	req.Header.Set("Content-Type", "application/json")
@@ -406,7 +406,7 @@ func TestDeleteMarkerWithDBFail(t *testing.T) {
 	s, mock := getMockServer()
 	defer s.finalize()
 
-	req, err := http.NewRequest("DELETE", "/marker/2", nil)
+	req, err := http.NewRequest("DELETE", "/marker/2/3", nil)
 
 	req.Header.Set("Authorization", stubAuthHeader)
 	req.Header.Set("Content-Type", "application/json")
@@ -430,7 +430,7 @@ func TestDeleteNoAuthHeader(t *testing.T) {
 	s, _ := getMockServer()
 	defer s.finalize()
 
-	req, err := http.NewRequest("DELETE", "/marker", strings.NewReader(`{"lat":1.2,"lng":1.1}`))
+	req, err := http.NewRequest("DELETE", "/marker/2/3", nil)
 	req.Header.Set("Content-Type", "application/json")
 
 	assert.NoError(t, err)
@@ -447,7 +447,7 @@ func TestDeleteInvalidAuthHeader(t *testing.T) {
 	s, _ := getMockServer()
 	defer s.finalize()
 
-	req, err := http.NewRequest("DELETE", "/marker", strings.NewReader(`{"lat":1.2,"lng":1.1}`))
+	req, err := http.NewRequest("DELETE", "/marker/2/3", nil)
 	req.Header.Set("Authorization", "Bearer 1234")
 	req.Header.Set("Content-Type", "application/json")
 
