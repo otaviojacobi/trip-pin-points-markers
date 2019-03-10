@@ -4,7 +4,7 @@
 
 ## AVAILABLE AT: http://trip-pin-points-markers.sa-east-1.elasticbeanstalk.com
 
-## API Documentation: https://app.swaggerhub.com/apis-docs/otaviojacobi/trip-pin-points-markers/1.0.1
+## API Documentation: https://app.swaggerhub.com/apis-docs/otaviojacobi/trip-pin-points-markers/1.0.2
 
 ## Running
 
