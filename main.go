@@ -6,11 +6,12 @@ import (
 	"database/sql"
 	"encoding/pem"
 	"fmt"
-	"github.com/rs/cors"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/rs/cors"
 
 	"github.com/gorilla/mux"
 
