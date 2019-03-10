@@ -2,7 +2,7 @@
 
 # Trip Pin Points Markers Service
 
-## AVAILABLE AT: http://trip-pin-points-markers.sa-east-1.elasticbeanstalk.com
+## AVAILABLE AT: https://trip-pin-points-markers.com
 
 ## API Documentation: https://app.swaggerhub.com/apis-docs/otaviojacobi/trip-pin-points-markers/1.0.2
 

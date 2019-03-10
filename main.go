@@ -36,7 +36,7 @@ func newServer() *server {
 		log.Fatalf("Failed to initialize zap logger: %v", err)
 	}
 
-	res, err := http.Get("http://trip-pin-points.sa-east-1.elasticbeanstalk.com/key")
+	res, err := http.Get("https://trip-pin-points-auth.com/key")
 	if err != nil {
 		s.logger.Fatal("Failed to get authorization key", zap.Error(err))
 	}
